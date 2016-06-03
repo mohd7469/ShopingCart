@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en" data-ng-app="myApp">
+<head>
+  <meta charset="UTF-8">
+  <title>Shoping Cart</title>
+  <script src="../bootstrap/angular.min.js"></script>
+
+</head>
+<body>
+<h1>Shopping Cart</h1>
+<div data-ng-controller="ShoppingCtrl">
+    <div data-ng-repeat="item in items">
+        ({{item.price | currency}}) &nbsp; {{item.title}}
+        <input type="text" data-ng-model="item.quantity"/>
+        <button data-ng-click="remove($index)">remove</button>
+        {{item.price * item.quantity | currency}}
+    </div>
+    <div>Total: {{totalCart() | currency}}</div>
+    <div>Discount: {{bill.discount | currency}}</div>
+    <div>Subtotal: {{bill.subtotal | currency}}</div>
+</div>
+
+<script>
+  var app = angular.module('myApp', [])
+          .controller("ShoppingCtrl", ShoppingCtrl);
+
+  ShoppingCtrl.$inject = ['$scope'];
+
+  function ShoppingCtrl($scope) {
+      /*locals*/
+      var items;
+
+      items = [{
+          title: 'milk',
+          price: 6.5,
+          quantity: 0
+      }, {
+          title: 'choco',
+          price: 5,
+          quantity: 0
+      }, {
+          title: 'candy',
+          price: 2,
+          quantity: 0
+      }, {
+          title: 'cake',
+          price: 10,
+          quantity: 0
+      }];
+
+        /*VM-Properties*/
+      $scope.items = items;
+      $scope.bill = {};
+
+
+      /*VM-Functions*/
+      $scope.remove = remove;
+      $scope.totalCart = totalCart;
+
+      /*Initialization*/
+//      totalCart();
+
+      /*declaration*/
+       function remove(index) {
+          items[index].quantity = 0;
+       }
+
+       function totalCart() {
+          var total;
+
+           total = 0;
+
+          for (var i = 0, len = $scope.items.length; i < len; i++) {
+              total = total + $scope.items[i].price * $scope.items[i].quantity;
+          }
+
+           $scope.bill.discount = total > 100 ? 10 : 0;
+           $scope.bill.subtotal = total - $scope.bill.discount;
+           console.log($scope.bill);
+
+           return total;
+      }
+  }
+
+</script>
+</body>
+</html>
